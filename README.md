@@ -1,1 +1,1 @@
-# ChristopherMaronga.github.io
+# Christopher S Maronga, MSc.
