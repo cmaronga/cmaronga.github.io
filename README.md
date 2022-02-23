@@ -1,1 +1,1 @@
-# Christopher S Maronga, MSc.
+# Christopher S Maronga
