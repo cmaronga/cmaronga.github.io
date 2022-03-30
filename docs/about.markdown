@@ -1,18 +1,11 @@
 ---
 layout: page
-title: Profile
+title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+I am an experienced Data Scientist with demonstrated history of working in Healthcare Data Management and Statistical analyses.
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Long run experience with data and model exploration tools, designing of data products in Rshiny and Rmarkdown and a Co-organizer of NairobiR.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
+Knowledgeable in designing of database and data collection tools in REDCap, ODK and selected RDMS
