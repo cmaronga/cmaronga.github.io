@@ -1,17 +1,18 @@
 ---
-  title: <center><strong> Working with databases in R </strong></center>
-  author: <center><strong> Christopher Maronga - R Programmer </strong></center>
-  date: <center><strong> 12 June, 2021 </strong></center>
-  output: 
+layout: post
+title: Working with databases in R 
+author: Christopher Maronga - R Programmer 
+date: 2022-02-04 03:27:24 +0100
+output: 
   html_document:
   keep_md: yes
-number_sections: yes
-theme: united
-toc: yes
-toc_depth: 4
-toc_float:
-  collapsed: yes
-smooth_scroll: yes
+  number_sections: yes
+  theme: united
+  toc: yes
+  toc_depth: 4
+  toc_float:
+    collapsed: yes
+    smooth_scroll: yes
 ---
   
   
