@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Working with databases in R"
-date:   2022-02-04 03:27:24 +0100
+date:   2021-06-12 03:27:24 +0100
 categories: databases
 ---
 
