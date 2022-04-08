@@ -1,7 +1,6 @@
 ---
 title: <center><strong> Web scraping using R </strong></center>
 author: <center><strong> Christopher Maronga </strong></center>
-date: <center><strong> `r format(Sys.time(), '%d %B, %Y')` </strong></center>
 output: 
   html_document:
     number_sections: no
