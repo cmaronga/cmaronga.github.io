@@ -1,6 +1,7 @@
 ---
 title: <center><strong> Web scraping using R </strong></center>
 author: <center><strong> Christopher Maronga </strong></center>
+categories: databases with R
 output: 
   html_document:
     number_sections: no
