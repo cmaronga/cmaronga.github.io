@@ -263,17 +263,17 @@ div.tocify {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
+<p>Web scraping is concept that most probably you have heard about. This is the art of <a href="https://en.wikipedia.org/wiki/Web_scraping">harvesting</a> publicly available data from a website for use in your analysis or reporting. Web scraping can be as simple as copying the contents of a website and pasting them on an excel sheet, but that’s not what we are going to do today. Most website pages are built using <a href="https://en.wikipedia.org/wiki/HTML"><code>HTML</code></a> and this allows us to use tools such as R to dynamically extract the data.</p>
+<p>In this tutorial, I am going walk you through how you can harvest data from websites using R programming language. You can do this by coding the logic and instructions manually or use the package <code>rvest</code> to easily extract the contents of a website. We would demonstrate the examples using the below two websites</p>
+<ul>
+<li>National Institute for Health and care Excellence (<a href="https://bnf.nice.org.uk/drug/">NICE</a>) - List of drugs and pricing</li>
+<li>The Global Economy.com <a href="https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/">Dollar</a> exchange rates for various countries</li>
+</ul>
 </div>
 <div id="loading-packages" class="section level1">
 <h1>Loading packages</h1>
-<pre class="r"><code>library(DBI)  # R database interface
-library(odbc)  # connection to odbc compatible database
-library(RSQLite) # Backed driver for SQLite
-library(RMySQL) # Backed driver for MySQL
-library(tidyverse) # dplyr verbs and more
-library(redcapAPI) # connecting to REDCap database
-library(here)  # manage working directories
-library(DT)</code></pre>
+<pre class="r"><code>library(tidyverse) # data wrangling and viz
+library(rvest)     # for webscraping</code></pre>
 </div>
 
 

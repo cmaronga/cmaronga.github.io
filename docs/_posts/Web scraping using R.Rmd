@@ -27,21 +27,20 @@ knitr::opts_chunk$set(warning = F, message = F,
 
 # Introduction
 
+Web scraping is concept that most probably you have heard about. This is the art of [harvesting](https://en.wikipedia.org/wiki/Web_scraping) publicly available data from a website for use in your analysis or reporting. Web scraping can be as simple as copying the contents of a website and pasting them on an excel sheet, but that's not what we are going to do today. Most website pages are built using [`HTML`](https://en.wikipedia.org/wiki/HTML) and this allows us to use tools such as R to dynamically extract the data.
 
+In this tutorial, I am going walk you through how you can harvest data from websites using R programming language. You can do this by coding the logic and instructions manually or use the package `rvest` to easily extract the contents of a website. We would demonstrate the examples using the below two websites
+
+- National Institute for Health and care Excellence ([NICE](https://bnf.nice.org.uk/drug/)) - List of drugs and pricing
+- The Global Economy.com [Dollar](https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/) exchange rates for various countries
 
 
 
 # Loading packages
 
 ```{r packages}
-library(DBI)  # R database interface
-library(odbc)  # connection to odbc compatible database
-library(RSQLite) # Backed driver for SQLite
-library(RMySQL) # Backed driver for MySQL
-library(tidyverse) # dplyr verbs and more
-library(redcapAPI) # connecting to REDCap database
-library(here)  # manage working directories
-library(DT)
+library(tidyverse) # data wrangling and viz
+library(rvest)     # for webscraping
 ```
 
 
