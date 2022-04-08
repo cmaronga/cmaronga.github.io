@@ -5,4 +5,4 @@ permalink: /cv/
 ---
 
 
-<iframe src="http://docs.google.com/gview?url=http://example.com/mypdf.pdf&embedded=true" style="width:718px; height:700px;" frameborder="0"></iframe>
+{{ cmaronga.github.io }}/my_files/resume.pdf
