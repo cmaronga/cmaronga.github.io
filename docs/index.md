@@ -5,31 +5,6 @@
 layout: home
 ---
 
-
-  
-My name is [Moses Mburu](https://www.linkedin.com/in/mmburu/). This is just some of the work I do when learning data science.
-
-| Description | Notebook | Source Code
-| ------------- | ------------- | ------------- |
-  | Breast cancer prediction | [link](https://m-mburu.github.io/breast_cancer_prediction/cancer_data.html) | [R Markdown (Rmd)](breast_cancer_prediction/cancer_data.Rmd)  |
-  | Busara task | [link](https://m-mburu.github.io/busara_task/busara-data-analysis.html) | [R Markdown (Rmd)](busara_task/busara data analysis.Rmd)  |
-  | Zindi loan prediction | [link](https://m-mburu.github.io/loan_prediction/loan_prediction.html) | [R Markdown (Rmd)](loan_prediction/loan_prediction.Rmd)  |
-  | TZ Water Pumps | [link](https://m-mburu.github.io/water_pumps_tz/water_pumps.html) | [R Markdown (Rmd)](water_pumps_tz/water_pumps.Rmd)  |
-  | Intro to dimension reduction | [link](https://m-mburu.github.io/introduction-to-advanced-dimensionality-reduction/introduction_dimensionality_reduction.html) | [R Markdown (Rmd)](ntroduction-to-advanced-dimensionality-reduction/introduction_dimensionality_reduction.Rmd)  |
-  | Clustering | [link](https://m-mburu.github.io/introduction-to-advanced-dimensionality-reduction/clustering_fashion_mnist.html) | [R Markdown (Rmd)](ntroduction-to-advanced-dimensionality-reduction/clustering_fashion_mnist.Rmd)  |
-  | Kenya maps | [link](https://m-mburu.github.io/kenya_population/kenya_maps.html) | [R Markdown (Rmd)](/kenya_population/kenya_maps.Rmd)  |
-  | Kenya 2019 household assets | [link](https://m-mburu.github.io/kenya_population/household_assets_2019census.html) | [R Markdown (Rmd)](/kenya_population/household_assets_2019census.Rmd)  | 
-  | Introduction to association analysis |[link](https://m-mburu.github.io/association_analysis/association_analysis.html) | [R Markdown (Rmd)](/association_analysis/association_analysis.Rmd)  |
-  | Digit recognition MNIST |[link](https://m-mburu.github.io/kaggle/mnist_digits/mnist.html) | [R Markdown (Rmd)](/kaggle/mnist_digits/mnist.Rmd)|
-  | ML with tree models|[link](https://m-mburu.github.io/datacamp/ml_tree_methods_r/ml_tree_methods.html) | [R Markdown (Rmd)](/datacamp/ml_tree_methods_r/ml_tree_methods.Rmd))|
-  | Network Analysis |[link](https://m-mburu.github.io/datacamp/network-analysis-in-r/network_analysis_r.html) | [R Markdown (Rmd)](/datacamp/network-analysis-in-r/network_analysis_r.Rmd))|
-  | Airbnb NYC |[link](https://m-mburu.github.io/kaggle/newyork_airbnb/newyork_airbnb.html) | [R Markdown (Rmd)](/kaggle/newyork_airbnb/newyork_airbnb.Rmd)|
-  | Explainable ML |[link](https://m-mburu.github.io/kaggle/heart_disease/heart_disease.html) | [R Markdown (Rmd)](/kaggle/heart_disease/heart_disease.Rmd)|
-  | Introduction to deep learning |[link](https://m-mburu.github.io/datacamp/introduction_deeplearning/introduction-to-deep-learning-in-python.html) | [Python notebook (ipnb)](/datacamp/introduction_deeplearning/introduction-to-deep-learning-in-python.ipynb)|
-  | Mburu CV |[link](https://m-mburu.github.io/cv/cv_mburu.html) | [Rmarkdown (Rmd)](/cv/cv_mburu.Rmd)|
-  | Malnutrition Prevalence Africa |[Shiny App ](https://mmburu.shinyapps.io/maln_prev_africa/) | [github repo](https://github.com/m-mburu/m-mburu.github.io/tree/master/shiny/ihme_maln)|
-  | East Africa poverty data |[link ](https://m-mburu.github.io/kenya_population/ea_poverty.html) | [Rmarkdown (Rmd)](/kenya_population/ea_poverty.Rmd)|
-  | Kenya debt |[link ](https://m-mburu.github.io/kenya_population/kenya_debt_and_dollar_price.html) | [Rmarkdown (Rmd)](/kenya_population/kenya_debt_and_dollar_price.Rmd)|
-  | Data camp imputation in R |[link ](https://m-mburu.github.io/datacamp/imputations_in_R/imputations_in_R.html) | [Rmarkdown (Rmd)](/datacamp/imputations_in_R/imputations_in_R.Rmd)|
-  | Datacamp Anomaly detection in R |[link ](https://m-mburu.github.io/datacamp/anomaly_detection_R/anomaly_detection.html) | [Rmarkdown (Rmd)](/datacamp/anomaly_detection_R/anomaly_detection.Rmd)|
-  
+| Blog title               | Blog notes                                                                  | Code                                                         |
+|--------------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------|
+| Breast cancer prediction | [link](https://cmaronga.github.io/databases-with-R/databases.html) | [R Markdown (Rmd)](databases-with-R/databases.Rmd) |
