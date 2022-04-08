@@ -6,7 +6,7 @@ library(rmarkdown)
 library(here)
 
 # define the date of the post
-post_date <- format(lubridate::ymd("2022-03-13"),"%Y-%m-%d")  # This is the date of publication
+post_date <- format(lubridate::ymd("2022-04-04"),"%Y-%m-%d")  # This is the date of publication
 
 
 
@@ -24,5 +24,5 @@ render(
   output_dir =  here(
     "docs", "_posts"
   ),
-  output_file = paste0(post_date, "-Web scraping using R")
+  output_file = paste0(post_date, "-Web-scraping-using-R")
 )
