@@ -100,6 +100,17 @@ library(here)
 
 
 
+## Testing plot
+```{r}
+mtcars %>% 
+  ggplot(aes(mpg, disp))+geom_point() +
+  labs(title = "Plot title example")
+```
+
+
+
+
+
 
 
 
