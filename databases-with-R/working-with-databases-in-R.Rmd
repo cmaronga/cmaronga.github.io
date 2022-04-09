@@ -88,7 +88,7 @@ Relational databases such as `RMySQL` and web-based databases such as `REDCap` h
 - How to secure your API while working on collaborative projects.
 
 
-Blog content coming soon ....
+Blog content in progress ....
 
 
 
