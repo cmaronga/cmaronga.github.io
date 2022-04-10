@@ -54,6 +54,15 @@ a:hover {
 </style>
 
 
+```{css, echo=FALSE}
+.code-format {
+  background-color: #ededed;
+  color: black;
+}
+```
+
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(warning = F, 
                       message = F,
@@ -61,7 +70,8 @@ knitr::opts_chunk$set(warning = F,
                       dpi = 180, 
                       fig.width = 12, 
                       fig.height = 8,
-                      comment = "")
+                      comment = "",
+                      class.source="code-format")
 library(ggpubr)
 library(ggthemes)
 library(bslib)
@@ -188,38 +198,148 @@ paracetamol_df %>% datatable(rownames = F)
 The previous example using the BNF website was pretty much straight forward and easy, however not all websites will be well structured as the BNF website and thus, the `rvest` functions we saw above will fail, hence the above approach won't work. Therefore, this calls for a manual web scraping approach without relying on `rvest` package. A good example is the next [website](https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/) on dollar exchange rates for various countries.
 
 
+Notice that when we try to use the above approach, it fails us because it returns no nodes/tables using `html_nodes` function, at this point, you can proceed with the rest of the steps to fetch the table into R.
+
+```{r}
+# store url link
+URL2 <- "https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/"
+
+# read the html
+dollaEx_webpage <- read_html(URL2)
+
+# try extracting nodes
+dollaEx_nodes <- html_nodes(dollaEx_webpage, "table")
+
+dollaEx_nodes
+```
+
+We will revert to manual scraping using `readLines()` function. First, we will read the HTML code into R as before but proceed differently.
+
+### Read the webpage
+
+```{r}
+#Reading the HTML code from the website
+dollaEx_webpage <- readLines(URL2)
+
+head(dollaEx_webpage, 7)
+```
+
+The `dollaEx_webpage` is basically a HTML page with all the usual html tags and stuff. So, we are going refer to the website for a start point to give us reference for first entry and last entry of the page. From experience, I have found focusing on the actual data saves time and very easy to proceed forth as opposed to randomly picking any entry on the page.
+
+For instance, Afghanistan is the first entry on the table and Zambia  is the last entry, this gives me an idea of the bound of the data that I want. Ideally I need everything between entry one and last entry and I am going to show you how.
+
+### Search for data bounds
+```{r}
+# First entry on the page
+str_which(dollaEx_webpage, "Afghanistan")
+
+```
+
+What this means is that the key word Afghanistan has been found in 3 positions; 616, 617 and 638. We can try to triangulate around these positions and see what we've got going. There is not rule for triangulation, you just throw the net and inspect the output, that's why it's a manual approach
+
+```{r}
+dollaEx_webpage[614:620] # I will try between 614:620 and inspect output
+                         # NOTE, I am interested at the start of the data string
+
+```
+
+Do the same with the last entry
+
+```{r}
+# Last entry
+str_which(dollaEx_webpage, "Zambia")
+
+dollaEx_webpage[6337:6340] # NOTE, I am interested at the end of the data string
+```
+
+After carefully inspecting the above outputs, I can conclude that the data I am looking for lies between 615 to 6339. I have exlcuded positions 614 and 6340 because clearly, they contain nothing other than `"\t\t\t\t\t\t\t\t\t\t\t\t\t"` tags only.
+
+
+### Define data bounds
+After arriving at this conclusion, then next step is to now narrow your webpage to the data bounds only i.e.
+
+
+```{r}
+# resize your webpage to only contain the data
+dollaEx_webData <- dollaEx_webpage[615:6339]
+
+head(dollaEx_webData)
+```
+
+If you widely look at the object `dollaEx_webData`, it contains a lot of unnecessary `"\t\t\t\t\t\t\t\t\t\t\t\t\t"` tags, so now it's time to clean this object carefully indorder to obtain the data.
+
+### Cleanup process
+
+```{r}
+# remove ALL the "\t"
+dollaEx_clean <- dollaEx_webData %>% str_remove_all(pattern = "\t")
+
+head(dollaEx_clean,35)
+```
+
+
+The object `dollaEx_webData` basically contains unique strings that contain data from the column of the table in the url. If you look closely, you will see a recurring pattern of strings, each starting with `"<div class=\"benckmarkTableName column1\">"` and ending with `""`; and ideally, this is the trick. The ability to understand the output and content of `dollaEx_clean`. 
+
+If you then count these start and end of reccuring patterns, you find that they are 30 in number, so a single country data is composed of 30 unique strings Try viewing the first 80 rows of `dollaEx_clean`, you will be able to see what I mean.
+
+Take these unique strings and turn them into a matrix with each column containing the vital pieces of information and drop what is not required.
+
+```{r}
+dollaEx_matrix <- matrix(dollaEx_clean, 
+                         ncol = 30, # 30 columns because there were 30 unique strings
+                         byrow = TRUE)
+
+head(dollaEx_matrix, 2)
+```
+
+Information that we are most interested in (i.e the columns of the table in the url) are contained in the following columns of the matrix
+
+  - column 3 contains `country`
+  - column 8 contains `latest data from`
+  - column 12 contains `latest value`
+  - column 16 contains `change 3 months`
+  - column 20 contains `change 12 months`
+
+
+With this information, we can now construct the final clean matrix
+
+```{r}
+# drop columns that don't contain information of interest
+dollaEx_matrix_clean <- dollaEx_matrix[, c(3, 8, 12, 16, 20)]
+
+head(dollaEx_matrix_clean, 5)
+```
+
+Now construct a tibble from the above matrix and this will be our final product of the table from the url
+
+```{r}
+# final table
+exchane_data <- tibble(
+      Country = dollaEx_matrix_clean[, 1],
+      LatestData = dollaEx_matrix_clean[, 2],
+      LatesValue = dollaEx_matrix_clean[, 3],
+      Change3months = dollaEx_matrix_clean[ ,4],
+      Change12months = dollaEx_matrix_clean[ ,5]
+    ) %>% mutate(across(LatesValue, as.numeric)) 
+
+head(exchane_data)
+```
+
+
+```{r}
+# Full data
+exchane_data %>% datatable(rownames = F)
+```
+
+**NOTE:** The downside of the manual approach is that it always depends on the website not changing structure, for instance if we had other countries added after Zambia, then our code above would not be able to extract that extra data sadly.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## References
+- Easily Harvest (Scrape) Web Pages using [rvest](https://rvest.tidyverse.org/)
+- Josh Errickson's [tutorial](https://dept.stat.lsa.umich.edu/~jerrick/courses/stat701/notes/webscrape.html) on web scraping
+- Joint Formulary Committee (2020) British National Formulary. Available at: http://www.medicinescomplete.com (Accessed: day month year)
+- [TheGlobalEconomy.com](https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/)
 
 
 
