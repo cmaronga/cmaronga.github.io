@@ -1,0 +1,326 @@
+---
+title: <center><strong> Global Neonatal Mortality </strong></center>
+author: <center><strong> Christopher Maronga </strong></center>
+categories: globalneonataldeaths
+output: 
+  html_document:
+    number_sections: no
+    theme: 
+      bootswatch: minty
+      base_font: "sans-serif"
+      primary: "#008B8B"
+      secondary: "#002147"
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---
+
+<style>
+h1, h2, h3, h4, h5, h6, legend {
+    color: #008B8B;
+}
+
+#nav-top span.glyphicon {
+    color: #22983B;
+}
+
+#table-of-contents header {
+    color: #22983B;
+}
+
+#table-of-contents h2 {
+    background-color: #22983B;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#d64a70,#d64a70);
+    color: #c7254e;
+}
+
+a:hover {
+    color: #ff0000;
+}
+
+  #content {
+    max-width: 13000px;
+  }
+  
+  #sidebar h2 {
+    background-color: #008B8B;
+  }
+
+</style>
+
+
+```{css, echo=FALSE}
+.code-format {
+  background-color: #ededed;
+  color: black;
+}
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, 
+                      message = F,
+                      echo = T, 
+                      dpi = 180, 
+                      fig.width = 12, 
+                      fig.height = 8,
+                      comment = "",
+                      class.source="code-format")
+library(ggpubr)
+library(ggthemes)
+library(bslib)
+```
+
+
+
+
+
+## Introduction
+
+Approximately 56 million people died in 2017 of which up to 10% were children and neonates. Neonatal mortality is death within the first 28 days of life. This period is the most vulnerable time for a child. Average global death rate of 17 deaths per 1,000 live births in 2019 (UNICEF). This number has halved in the period between 1990 and 2019 (WHO). Common causes of newborns deaths: 
+
+- birth defects
+- pre-mature births
+- birth asphyxia etc.
+
+
+```{r packages}
+# load and install packages
+if(!require(pacman)) install.packages("pacman")
+
+pacman::p_load(
+  "tidyverse", # for data manipulation and viz
+  "lubridate", # for dates manipulation
+  "here",      # managing in-house paths
+  "ggthemes",
+  "sf",
+  "tmap",
+  "ggrepel",
+  "ggtext",
+  "lubridate",
+  "tidytuesdayR" # reading data from tidyTuesday repo
+
+)
+```
+
+## Data Source
+
+Data from weekly [#rstats](https://twitter.com/search?q=%23rstats&src=typed_query&f=top)challenge, [#tidytuesday](https://github.com/rfordatascience/tidytuesday)on global mortality for week 16 in 2018. Data contains various causes of deaths globally such as cardiovascular diseases, cancers etc. Focus of the presentation is on neonatal deaths as a proportion of all global deaths. Data spans for a period of 27 years between 1990 to 2016.
+
+
+
+```{r load dataset,warning=FALSE, message=FALSE}
+# downloading data from tidy tuesday repository
+
+glob_deaths <- tt_load('2018-04-16')$global_mortality # read from GitHub
+
+# focusing on Maternal and neonatal deaths
+neonatal_deaths <- glob_deaths %>%
+  select(country, country_code, year, "Neonatal deaths" = `Neonatal deaths (%)`)
+
+# download country codes and continent names
+country_codes <- read_csv("https://pkgstore.datahub.io/JohnSnowLabs/country-and-continent-codes-list/country-and-continent-codes-list-csv_csv/data/b7876b7f496677669644f3d1069d3121/country-and-continent-codes-list-csv_csv.csv")
+
+
+
+# chnge to long format
+neonatal_deaths_long <- neonatal_deaths %>%
+  pivot_longer(cols = `Neonatal deaths`,
+               names_to = "mort_type",
+               values_to = "deaths") %>%
+  left_join(
+    country_codes %>%
+      select(Continent_Name, Three_Letter_Country_Code),
+    by = c("country_code" = "Three_Letter_Country_Code")
+  )
+```
+
+
+```{r}
+# data preparation
+worldmap_data <- rnaturalearth::ne_download(scale = 110,
+                                       type = "countries",
+                                       category = "cultural",
+                                       destdir = tempdir(),
+                                       load = TRUE,
+                                       returnclass = "sf")
+```
+
+
+
+## World Trend
+
+
+
+```{r}
+neonatal_deaths_long %>%
+  group_by(year, mort_type) %>%
+  summarise(dths = mean(deaths, na.rm = T)) %>%
+  ggplot(aes(year, dths,
+             group = mort_type,
+             col = mort_type)) +
+  geom_line() +
+  geom_point(aes(size = dths)) +
+  scale_x_continuous(breaks = seq(1990, 2016, 2))+
+  scale_y_continuous(labels = scales::percent_format(scale = 1, accuracy = 1))+
+    labs(title = "Proportion of neonatal deaths",
+       subtitle = "World trend between 1990 and 2016",
+       x = "Year", y = "Proportion",
+       caption = "Data source: ourworldindata.org")+
+    theme(
+    plot.background = element_rect(fill = 'gray15'),
+    panel.grid = element_line(color = '#6897bb'),
+    panel.grid.minor = element_blank(),
+    text = element_text(size = 12, color = 'snow3'),
+    axis.text = element_text(color = 'snow2', face = 'bold'),
+    plot.title = element_text(size = 20, color = 'snow2', hjust = 0),
+    axis.title.y  = element_text(angle = 90),
+    axis.ticks.x = element_line(size = 3),
+    plot.subtitle =  element_text(size = 15, color = 'snow2', hjust = 0),
+    legend.position = "none"
+  ) + coord_cartesian(clip = "off")
+```
+
+
+## Continental efforts
+
+
+```{r}
+neonatal_deaths_long %>%
+  filter(!is.na(Continent_Name)) %>%
+  group_by(year, Continent_Name) %>%
+  summarise(dths = mean(deaths, na.rm = T)) %>%
+  mutate(plot_txt = if_else(year == 2015, Continent_Name, NA_character_)) %>%
+  ggplot(aes(
+    year,
+    dths,
+    group = Continent_Name,
+    col = Continent_Name,
+    linetype = Continent_Name
+  )) +
+  geom_line(show.legend = F) +
+  geom_point(aes(size = dths),
+             show.legend = F) +
+  labs(
+    title = "Proportion of neonatal deaths",
+    subtitle = "Trend between 1990 and 2016 by continent",
+    x = "Year",
+    y = "",
+    caption = "Data source: ourworldindata.org"
+  ) +
+  scale_x_continuous(breaks = seq(1990, 2016, 2)) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1, accuracy = 1)) +
+  scale_color_brewer(palette = "Paired") +
+  theme(
+    plot.background = element_rect(fill = 'gray15'),
+    panel.grid = element_line(color = '#6897bb'),
+    panel.grid.minor = element_blank(),
+    text = element_text(size = 12, color = 'snow3'),
+    axis.text = element_text(color = 'snow2', face = 'bold'),
+    plot.title = element_text(
+      size = 20,
+      color = 'snow2',
+      hjust = 0
+    ),
+    plot.subtitle =  element_text(
+      size = 15,
+      color = 'snow2',
+      hjust = 0
+    )
+  ) +
+  geom_text_repel(aes(label = plot_txt),
+                  size = 4,
+                  show.legend = F) + coord_cartesian(clip = "off") +
+  geom_textbox(
+    data = NULL,
+    aes(2009, 6.3,
+        label = "A child born in sub-saharan Africa or Southern Asia is 10 times more likely to die in the first month than a child born in a high-income country (WHO,2020)"),
+    show.legend = F,
+    width = unit(15, 'cm'),
+    fill = 'gray15',
+    size = 4.5,
+    col = 'snow3'
+  )
+```
+
+## Focus on Africa
+
+
+```{r}
+# focus on Africa
+africa_cont <- neonatal_deaths_long %>% 
+  left_join(worldmap_data, by = c("country_code" = "SOV_A3")) %>% 
+  filter(Continent_Name == "Africa") %>%
+  st_set_geometry("geometry")
+
+# world
+world <- neonatal_deaths_long %>% 
+  left_join(worldmap_data, by = c("country_code" = "SOV_A3")) %>% 
+  filter(year %in% c(1990, 2003, 2016)) %>% 
+  st_set_geometry("geometry")
+
+```
+
+```{r}
+tm_shape(africa_cont %>% filter(year %in% c(1990, 2003, 2016)))+
+  tm_fill("deaths",
+          title = "Neonatal deaths(%)")+
+  tm_text("country", size = 0.7, col = "black")+
+  tm_facets('year') +
+  tm_layout(bg.color = "lightblue",
+            legend.title.size = 2,
+            panel.label.size = 1.7, title.size = 2, legend.outside = F,
+            panel.labels = paste0('Proportion of neonatal deaths in ',
+                                  c('1990','2003','2016')) ,
+            panel.show = T,
+            panel.label.height = 2,
+            legend.position = c('left','bottom'),
+            legend.text.size = 1.3,
+            legend.title.fontface = "bold")
+```
+
+
+
+## World neonatal deaths
+
+
+```{r}
+tm_shape(world %>% filter(year %in% c(1990, 2003, 2016)))+
+  tm_fill("deaths",
+          title = "Neonatal deaths(%)")+
+  tm_facets('year') +
+  tm_layout(bg.color = "lightblue",
+            legend.title.size = 2,
+            panel.label.size = 1.7, title.size = 2, legend.outside = F,
+            panel.labels = paste0('Proportion of neonatal deaths in ',
+                                  c('1990','2003','2016')) ,
+            panel.show = T,
+            panel.label.height = 1,
+            legend.position = c('left','bottom'),
+            legend.text.size = 1.3,
+            legend.title.fontface = "bold")
+```
+
+## Conclusions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

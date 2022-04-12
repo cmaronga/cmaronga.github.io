@@ -1,0 +1,97 @@
+---
+title: <center><strong> Web scraping using R </strong></center>
+author: <center><strong> Christopher Maronga </strong></center>
+categories: databases with R
+output: 
+  html_document:
+    number_sections: no
+    theme: 
+      bootswatch: minty
+      base_font: "sans-serif"
+      primary: "#008B8B"
+      secondary: "#002147"
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---
+
+<style>
+h1, h2, h3, h4, h5, h6, legend {
+    color: #008B8B;
+}
+
+#nav-top span.glyphicon {
+    color: #22983B;
+}
+
+#table-of-contents header {
+    color: #22983B;
+}
+
+#table-of-contents h2 {
+    background-color: #22983B;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#d64a70,#d64a70);
+    color: #c7254e;
+}
+
+a:hover {
+    color: #ff0000;
+}
+
+  #content {
+    max-width: 13000px;
+  }
+  
+  #sidebar h2 {
+    background-color: #008B8B;
+  }
+
+</style>
+
+
+```{css, echo=FALSE}
+.code-format {
+  background-color: #ededed;
+  color: black;
+}
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, 
+                      message = F,
+                      echo = T, 
+                      dpi = 180, 
+                      fig.width = 12, 
+                      fig.height = 8,
+                      comment = "",
+                      class.source="code-format")
+library(ggpubr)
+library(ggthemes)
+library(bslib)
+# some house rules for plots and tables
+theme_set(theme_economist(base_size = 20))
+```
+
+
+## Introduction
+
+Data management for multi-centre cohort studies is challenging, especially when the sites are geographically dispersed and have varying technical and manpower capacity. Ensuring data quality, prompt resolution of data discrepancies and generating progress summary reports for such studies need to be accurate, systematic and timely. The Childhood Acute Illness and Nutrition Network (CHAIN) was a multi-centre cohort study recruiting from nine hospitals in Africa and Asia. Highly detailed data was collected across many biological and social domains. The cohort adopted Research Electronic Data Capture (REDCap), an open-source, web-based, metadata-driven system. In this article, I outline how we have used REDCap efficiently in conjuction with the open-source R software to automate the data management workflow for the CHAIN study.
+
+I will try to document step by step the various decisions and implementation that were used. I only found out that I can put this out here in my webpage for people to read and implement, as such, it will take a couple of days to put all these pieces together in writing and probably info-graph. Meanwhile, I presented his work at [Why R](https://www.youtube.com/WhyRFoundationVideos) conference in 2021 and you can find the [presentation](https://www.youtube.com/watch?v=PbD_e5sz4P8&t=833s) on youtube. The slides for this presentation can alos be accessed and downloaded [here](https://github.com/cmaronga/cmaronga.github.io/blob/main/my_files/automating_research_data_management.pdf)
+
+
+
+
+
+
+
+
+
+
