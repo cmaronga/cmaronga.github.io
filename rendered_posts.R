@@ -10,3 +10,11 @@ build_blogPost(date = "2021-06-12",
                folder_name = "databases-with-R", 
                rmd_full_name = "working-with-databases-in-R.Rmd" , 
                post_name = "Working with databases in-R")
+
+
+
+# Rshiny and REDCap (2018-12-16)
+build_blogPost(date = "2018-12-16", 
+               folder_name = "RShiny-and-REDCap", 
+               rmd_full_name = "RShiny-and-REDCap.Rmd" , 
+               post_name = "Automating-clinical-Data-Management-RShiny &-REDCap")
