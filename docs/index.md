@@ -4,4 +4,4 @@
 layout: home
 ---
 
-Sorry, as much it works, this is an old version of my blog site. Please kindly access my new looking blog site [here](https://cmaronga.github.io/codecraft.blog/). See you there!.
+Sorry, as much it works, this is an old version of my blog site. Please kindly access my new looking blog site [**here**](https://cmaronga.github.io/codecraft.blog/). See you there!.
