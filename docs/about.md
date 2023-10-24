@@ -3,4 +3,4 @@ layout: page
 title: About
 permalink: /about/
 ---
-Apologies, you are accessing an old version of my blog about page, please access my update blog [**here**](https://cmaronga.github.io/codecraft.blog/about.html), all created using Quarto.
+Sorry!, I migrated to this new looking site [**here**](https://cmaronga.github.io/codecraft.blog/about.html), see you there!.
