@@ -4,4 +4,6 @@
 layout: home
 ---
 
-Sorry!, I migrated to this new looking site [**here**](https://cmaronga.github.io/codecraft.blog/about.html), see you there!.
+Sorry!, I migrated to this new looking site [**here**](https://cmaronga.github.io/codecraft.blog/), see you there!.
+
+
