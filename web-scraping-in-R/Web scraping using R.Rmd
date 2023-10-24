@@ -1,0 +1,357 @@
+---
+title: <center><strong> Web scraping using R </strong></center>
+author: <center><strong> Christopher Maronga </strong></center>
+categories: databases with R
+output: 
+  html_document:
+    number_sections: no
+    theme: 
+      bootswatch: minty
+      base_font: "sans-serif"
+      primary: "#008B8B"
+      secondary: "#002147"
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---
+
+<style>
+h1, h2, h3, h4, h5, h6, legend {
+    color: #008B8B;
+}
+
+#nav-top span.glyphicon {
+    color: #22983B;
+}
+
+#table-of-contents header {
+    color: #22983B;
+}
+
+#table-of-contents h2 {
+    background-color: #22983B;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#d64a70,#d64a70);
+    color: #c7254e;
+}
+
+a:hover {
+    color: #ff0000;
+}
+
+  #content {
+    max-width: 13000px;
+  }
+  
+  #sidebar h2 {
+    background-color: #008B8B;
+  }
+
+</style>
+
+
+```{css, echo=FALSE}
+.code-format {
+  background-color: #ededed;
+  color: black;
+}
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, 
+                      message = F,
+                      echo = T, 
+                      dpi = 180, 
+                      fig.width = 12, 
+                      fig.height = 8,
+                      comment = "",
+                      class.source="code-format")
+library(ggpubr)
+library(ggthemes)
+library(bslib)
+# some house rules for plots and tables
+theme_set(theme_economist(base_size = 20))
+```
+
+
+## Introduction
+
+Web scraping is concept that most probably you have heard about. This is the art of [harvesting](https://en.wikipedia.org/wiki/Web_scraping) publicly available data from a website for use in your analysis or reporting. Web scraping can be as simple as copying the contents of a website and pasting them on an excel sheet, but that's not what we are going to do today. Most website pages are built using [`HTML`](https://en.wikipedia.org/wiki/HTML) and this allows us to use tools such as R to dynamically extract the data.
+
+In this tutorial, I am going walk you through how you can harvest data from websites using R programming language. You can do this by coding the logic and instructions manually or use the package `rvest` to easily extract the contents of a website. We would demonstrate the examples using the below two websites
+
+- National Institute for Health and care Excellence ([NICE](https://bnf.nice.org.uk/drug/)) - List of drugs and pricing
+- The Global Economy.com [Dollar](https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/) exchange rates for various countries
+
+
+
+## Loading packages
+
+```{r packages}
+library(tidyverse) # data wrangling and viz
+library(rvest)     # for webscraping
+library(ggthemes)
+library(foreach)
+library(DT)
+```
+
+
+## Webscraping BNF website
+
+The British National Formulary ([BNF](https://bnf.nice.org.uk/drug/)) and British National Formulary for Children ([BNFC](https://bnfc.nice.org.uk/drug/)) websites contains  up to date and highly authoritative information resource on medicines prescribed in the UK. These resources are mostly used by doctors, pharmacists and other healthcare professionals and it aims to provide healthcare professionals with sound up-to-date information about the use of and cost of medicines
+
+
+Typically, healthcare professionals using information from this website need to access it by searching through the alphabets for the drug of interest, copy & paste the information they are looking for. This proves to be quite tedious and time-consuming more especially if you need to do this for a long list of drugs.
+In this article, I am going to show you how you can dynamically fetch this information using R a concept known as web scraping or web-harvesting.
+
+
+First, you need to navigate to the page that contains the drug information that you want to extract. In this tutorial, I am going to use [paracetamol](https://bnf.nice.org.uk/medicinal-forms/paracetamol.html); but note that the below approach can be used with any drug in the website.
+
+Use the `read_html` to read the HTML code from the website url
+
+```{r}
+# get url from website
+URL <- "https://bnf.nice.org.uk/medicinal-forms/paracetamol.html"
+
+# read HTML from website
+paracetamol_webpage <- read_html(URL)
+
+# structure of `paracetamol_webpage`
+glimpse(paracetamol_webpage)
+
+```
+
+
+### Extract nodes
+
+The contents of the object `paracetamol_webpage` contains xml nodes which are essentially the number of tables from the webpage. we extract this information using the function `html_nodes()` that takes the html webpage object `paracetamol_webpage` as it's first argument and `table` as the second argument as shown below.
+
+```{r}
+# extract nodes (tables)
+paracetamol_nodes <- html_nodes(paracetamol_webpage, 
+                               "table") # extract all nodes (containing all tables)
+
+
+length(paracetamol_nodes); head(paracetamol_nodes)
+```
+
+
+This simply means that the paracetamol webpage contains 167 tables, and we are going to fetch all these tables and combine them into one long list/data frame. The object `paracetamol_nodes` contains the 167 tables that can be accessed using the function`html_table` and the object name as it's first argument.
+
+```{r}
+# use html_table to extract tables from the nodes object
+paracetamol_tables <- html_table(paracetamol_nodes)
+
+# list the first two tables
+head(paracetamol_tables, 2)
+
+```
+
+`paracetamol_tables` is a complex list (I unofficially call it `nested list`) that contains the table information as the first index of each list entry i.e. out of the 167 elements of the object, which are all lists in themselves, extracting position of each of them returns a nice tibble which is the table that we seek to extract.
+
+For instance, if I want table number 3 from the object `paracetamol_tables`, I will write the following code
+
+```{r}
+# extract table 3 of 167
+paracetamol_tables[3][[1]]
+```
+
+
+```{r}
+# extract table 8 of 167
+paracetamol_tables[8][[1]]
+```
+
+
+Take **`NOTE`** of the indices that change based on the number of tables returned by `html_nodes` and the use of double `[[]]` for the second index.
+
+
+### Extracting the tables
+
+We will write a loop using `foreach` package to automatically extract the individuals tables and bind them as tibble that can used to easily filter and search for information of interest in the columns.
+
+```{r}
+# pass the table IDs a
+paracetamol_df <- foreach(tableID = seq_along(paracetamol_tables), .combine = bind_rows)%do%{
+  # rbind to form tibble
+  paracetamol_tables[tableID][[1]]
+}
+
+tail(paracetamol_df)
+```
+
+Fantastic, job well done. We have extracted all the tables from the paracetamol webpage and combined them into a tibble that can be exported into a CSV. Our first task for this web scraping is now done. You can try replicate the above flow by picking a different drug and following through. The table below now shows the complete list of the paracetamol medication information that we just harvested from the BNF website.
+
+```{r}
+paracetamol_df %>% datatable(rownames = F)
+```
+
+
+## Dollar exchange rates
+
+The previous example using the BNF website was pretty much straight forward and easy, however not all websites will be well structured as the BNF website and thus, the `rvest` functions we saw above will fail, hence the above approach won't work. Therefore, this calls for a manual web scraping approach without relying on `rvest` package. A good example is the next [website](https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/) on dollar exchange rates for various countries.
+
+
+Notice that when we try to use the above approach, it fails us because it returns no nodes/tables using `html_nodes` function, at this point, you can proceed with the rest of the steps to fetch the table into R.
+
+```{r}
+# store url link
+URL2 <- "https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/"
+
+# read the html
+dollaEx_webpage <- read_html(URL2)
+
+# try extracting nodes
+dollaEx_nodes <- html_nodes(dollaEx_webpage, "table")
+
+dollaEx_nodes
+```
+
+We will revert to manual scraping using `readLines()` function. First, we will read the HTML code into R as before but proceed differently.
+
+### Read the webpage
+
+```{r}
+#Reading the HTML code from the website
+dollaEx_webpage <- readLines(URL2)
+
+head(dollaEx_webpage, 7)
+```
+
+The `dollaEx_webpage` is basically a HTML page with all the usual html tags and stuff. So, we are going refer to the website for a start point to give us reference for first entry and last entry of the page. From experience, I have found focusing on the actual data saves time and very easy to proceed forth as opposed to randomly picking any entry on the page.
+
+For instance, Afghanistan is the first entry on the table and Zambia  is the last entry, this gives me an idea of the bound of the data that I want. Ideally I need everything between entry one and last entry and I am going to show you how.
+
+### Search for data bounds
+```{r}
+# First entry on the page
+str_which(dollaEx_webpage, "Afghanistan")
+
+```
+
+What this means is that the key word Afghanistan has been found in 3 positions; 616, 617 and 638. We can try to triangulate around these positions and see what we've got going. There is not rule for triangulation, you just throw the net and inspect the output, that's why it's a manual approach
+
+```{r}
+dollaEx_webpage[614:620] # I will try between 614:620 and inspect output
+                         # NOTE, I am interested at the start of the data string
+
+```
+
+Do the same with the last entry
+
+```{r}
+# Last entry
+str_which(dollaEx_webpage, "Zambia")
+
+dollaEx_webpage[6337:6340] # NOTE, I am interested at the end of the data string
+```
+
+After carefully inspecting the above outputs, I can conclude that the data I am looking for lies between 615 to 6339. I have exlcuded positions 614 and 6340 because clearly, they contain nothing other than `"\t\t\t\t\t\t\t\t\t\t\t\t\t"` tags only.
+
+
+### Define data bounds
+After arriving at this conclusion, then next step is to now narrow your webpage to the data bounds only i.e.
+
+
+```{r}
+# resize your webpage to only contain the data
+dollaEx_webData <- dollaEx_webpage[615:6339]
+
+head(dollaEx_webData)
+```
+
+If you widely look at the object `dollaEx_webData`, it contains a lot of unnecessary `"\t\t\t\t\t\t\t\t\t\t\t\t\t"` tags, so now it's time to clean this object carefully indorder to obtain the data.
+
+### Cleanup process
+
+```{r}
+# remove ALL the "\t"
+dollaEx_clean <- dollaEx_webData %>% str_remove_all(pattern = "\t")
+
+head(dollaEx_clean,35)
+```
+
+
+The object `dollaEx_webData` basically contains unique strings that contain data from the column of the table in the url. If you look closely, you will see a recurring pattern of strings, each starting with `"<div class=\"benckmarkTableName column1\">"` and ending with `""`; and ideally, this is the trick. The ability to understand the output and content of `dollaEx_clean`. 
+
+If you then count these start and end of reccuring patterns, you find that they are 30 in number, so a single country data is composed of 30 unique strings Try viewing the first 80 rows of `dollaEx_clean`, you will be able to see what I mean.
+
+Take these unique strings and turn them into a matrix with each column containing the vital pieces of information and drop what is not required.
+
+```{r}
+dollaEx_matrix <- matrix(dollaEx_clean, 
+                         ncol = 30, # 30 columns because there were 30 unique strings
+                         byrow = TRUE)
+
+head(dollaEx_matrix, 2)
+```
+
+Information that we are most interested in (i.e the columns of the table in the url) are contained in the following columns of the matrix
+
+  - column 3 contains `country`
+  - column 8 contains `latest data from`
+  - column 12 contains `latest value`
+  - column 16 contains `change 3 months`
+  - column 20 contains `change 12 months`
+
+
+With this information, we can now construct the final clean matrix
+
+```{r}
+# drop columns that don't contain information of interest
+dollaEx_matrix_clean <- dollaEx_matrix[, c(3, 8, 12, 16, 20)]
+
+head(dollaEx_matrix_clean, 5)
+```
+
+Now construct a tibble from the above matrix and this will be our final product of the table from the url
+
+```{r}
+# final table
+exchane_data <- tibble(
+      Country = dollaEx_matrix_clean[, 1],
+      LatestData = dollaEx_matrix_clean[, 2],
+      LatesValue = dollaEx_matrix_clean[, 3],
+      Change3months = dollaEx_matrix_clean[ ,4],
+      Change12months = dollaEx_matrix_clean[ ,5]
+    ) %>% mutate(across(LatesValue, as.numeric)) 
+
+head(exchane_data)
+```
+
+
+```{r}
+# Full data
+exchane_data %>% datatable(rownames = F)
+```
+
+**NOTE:** The downside of the manual approach is that it always depends on the website not changing structure, for instance if we had other countries added after Zambia, then our code above would not be able to extract that extra data sadly.
+
+
+
+## References
+- Easily Harvest (Scrape) Web Pages using [rvest](https://rvest.tidyverse.org/)
+- Josh Errickson's [tutorial](https://dept.stat.lsa.umich.edu/~jerrick/courses/stat701/notes/webscrape.html) on web scraping
+- Joint Formulary Committee (2020) British National Formulary. Available at: http://www.medicinescomplete.com (Accessed: day month year)
+- [TheGlobalEconomy.com](https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

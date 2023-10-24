@@ -1,0 +1,112 @@
+---
+title: <center><strong> Web scraping using R </strong></center>
+author: <center><strong> Christopher Maronga </strong></center>
+categories: databases with R
+output: 
+  html_document:
+    number_sections: no
+    theme: 
+      bootswatch: minty
+      base_font: "sans-serif"
+      primary: "#008B8B"
+      secondary: "#002147"
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---
+
+<style>
+h1, h2, h3, h4, h5, h6, legend {
+    color: #008B8B;
+}
+
+#nav-top span.glyphicon {
+    color: #22983B;
+}
+
+#table-of-contents header {
+    color: #22983B;
+}
+
+#table-of-contents h2 {
+    background-color: #22983B;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#d64a70,#d64a70);
+    color: #c7254e;
+}
+
+a:hover {
+    color: #ff0000;
+}
+
+  #content {
+    max-width: 13000px;
+  }
+  
+  #sidebar h2 {
+    background-color: #008B8B;
+  }
+
+</style>
+
+
+```{css, echo=FALSE}
+.code-format {
+  background-color: #ededed;
+  color: black;
+}
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, 
+                      message = F,
+                      echo = T, 
+                      dpi = 180, 
+                      fig.width = 12, 
+                      fig.height = 8,
+                      comment = "",
+                      class.source="code-format")
+library(ggpubr)
+library(ggthemes)
+library(bslib)
+# some house rules for plots and tables
+theme_set(theme_economist(base_size = 20))
+```
+
+
+## Introduction
+
+Web scraping is concept that most probably you have heard about. This is the art of [harvesting](https://en.wikipedia.org/wiki/Web_scraping) publicly available data from a website for use in your analysis or reporting. Web scraping can be as simple as copying the contents of a website and pasting them on an excel sheet, but that's not what we are going to do today. Most website pages are built using [`HTML`](https://en.wikipedia.org/wiki/HTML) and this allows us to use tools such as R to dynamically extract the data.
+
+In this tutorial, I am going walk you through how you can harvest data from websites using R programming language. You can do this by coding the logic and instructions manually or use the package `rvest` to easily extract the contents of a website. We would demonstrate the examples using the below two websites
+
+- National Institute for Health and care Excellence ([NICE](https://bnf.nice.org.uk/drug/)) - List of drugs and pricing
+- The Global Economy.com [Dollar](https://www.theglobaleconomy.com/rankings/Dollar_exchange_rate/) exchange rates for various countries
+
+
+
+## Loading packages
+
+```{r packages}
+library(tidyverse) # data wrangling and viz
+library(rvest)     # for webscraping
+library(ggthemes)
+library(foreach)
+library(DT)
+```
+
+
+
+
+
+
+
+
+
+

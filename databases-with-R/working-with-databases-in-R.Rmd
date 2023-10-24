@@ -1,0 +1,103 @@
+---
+title: <center><strong> Working with databases in R </strong></center>
+author: <center><strong> Christopher Maronga </strong></center>
+categories: databases with R
+output: 
+  html_document:
+    number_sections: no
+    theme: 
+      bootswatch: minty
+      base_font: "sans-serif"
+      primary: "#008B8B"
+      secondary: "#002147"
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---
+
+<style>
+h1, h2, h3, h4, h5, h6, legend {
+    color: #008B8B;
+}
+
+#nav-top span.glyphicon {
+    color: #22983B;
+}
+
+#table-of-contents header {
+    color: #22983B;
+}
+
+#table-of-contents h2 {
+    background-color: #22983B;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#d64a70,#d64a70);
+    color: #c7254e;
+}
+
+a:hover {
+    color: #ff0000;
+}
+
+  #content {
+    max-width: 13000px;
+  }
+  
+  #sidebar h2 {
+    background-color: #008B8B;
+  }
+
+</style>
+
+
+```{css, echo=FALSE}
+.code-format {
+  background-color: #ededed;
+  color: black;
+}
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, 
+                      message = F,
+                      echo = T, 
+                      dpi = 180, 
+                      fig.width = 12, 
+                      fig.height = 8,
+                      comment = "",
+                      class.source="code-format")
+library(ggpubr)
+library(ggthemes)
+library(bslib)
+# some house rules for plots and tables
+theme_set(theme_economist(base_size = 20))
+```
+
+
+## Introduction
+
+This blog follows a successful on-line training hosted jointly by `NairobiR` and `RLadies` on 12, June 2021. You can watch the video on this youtube [link](https://www.youtube.com/watch?v=txMmjDQoQqE&t=4559s). In this video and blog, I cover the fundamental basics of connecting and extracting data dynamically from databases using Application Programming Interfaces (API's). The first step in any data handling process is loading data into your working tool regardless of the form and media of storage.
+
+Relational databases such as `RMySQL` and web-based databases such as `REDCap` have gained popularity as efficient and cost-effective storage of small - medium data. I am going to walk you through key steps in extracting and using data store in these platforms using R statistical language. Specifically, I will practically show examples of how to :-
+
+- Efficiently connect R to Relational Database Management Systems (RDBMS)
+- Query data stored in any RDBMS from within R/Rstudio
+- Connect and querying data from Research Electronic Data Capture (REDCap) database
+- How to secure your API while working on collaborative projects.
+
+
+Blog content in progress, meanwhile you can also access the slides for this workshop [here](https://github.com/cmaronga/cmaronga.github.io/blob/main/my_files/working_with_databases_in_R.pdf)
+
+
+
+
+
+
+
+
